@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: wifi-server-app  # Replace with your app's name
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: "80" # Explicitly set port 80 for HTTP
