@@ -43,9 +43,9 @@ app.get("/users", async (req, res) => {
 
 app.get("/cpu", (req,res)=>{
   console.log(os.platform())
-  res.send(`The Number of CPUS is : ${os.cpus()}`)
 
-  res.send(`The Number of CPUS is : ${os.cpus()[0].model}`)
+
+  res.send(`The Number of CPUS is : ${os.cpus()[0].model} ::::: ${os.cpus().length}`)
 })
 app.get("/data", async (req, res) => {
   const deviceName = req.query.device.toString();
