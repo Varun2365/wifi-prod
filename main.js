@@ -42,7 +42,7 @@ app.get("/users", async (req, res) => {
 });
 
 app.get("/cpu", (req,res)=>{
-  console.log(os.platform())
+
 
 
   res.send(`The Number of CPUS is : ${os.cpus()[0].model} ::::: ${os.cpus().length}`)
@@ -286,6 +286,7 @@ app.get('/users/data', async (req, res) => {
         res.send({
           validResponse : true,
           message : "Data Retrived",
+          name : user.name,
           data : user.devices
         })
       }
