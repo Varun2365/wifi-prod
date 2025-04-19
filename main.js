@@ -268,21 +268,21 @@ app.get('/users/data', async (req, res) => {
 
   // Sending Data for Home Screen
   if(params.action == "getInfo"){
-    console.log("Get Info Called")
+    
     var emailId = params.ui;
     try{
       const User = mongoose.model("Users", userSchema, "Users");
       const user = await User.findOne({email : emailId});
 
       if(user == null){
-        console.log("Sending IF")
+       
         res.send({
           validResponse : false,
           message : 'No User Found',
           data : []
         });
       }else{
-        console.log("Sending Else")
+        
         res.send({
           validResponse : true,
           message : "Data Retrived",
@@ -294,6 +294,56 @@ app.get('/users/data', async (req, res) => {
 
     }
   }
+
+
+
+
+  if(params.action == "removeDevice"){
+    console.log("Remove Device")
+    //Requires Query of "deviceId=****"
+    var emailId = params.ui;
+    var targetDevice = params.deviceId;
+    try{
+      var found = false;
+      const User = mongoose.model("Users", userSchema, "Users");
+      const user = await User.findOne({email : emailId});
+      if(user != null){
+
+
+        var tdevices = user.devices;
+        console.log(tdevices);
+        for(var i = 0 ; i < tdevices.length; i++){
+          if(tdevices[i]['name'] == targetDevice){
+            tdevices.splice(i,1);
+            user.devices = tdevices;
+            user.save();
+            console.log("Removed");
+            found = true;
+            break;
+          }
+        }
+        if(!found){
+          res.send({
+            validResponse: false,
+            message: "Device Not Found",
+        });
+        }
+        else{
+          res.send({
+            validResponse: false,
+            message: "Device Removed",
+        });
+        }
+      }else{
+        res.send({
+          validResponse: false,
+          message: "User Not Found",
+      });
+      }
+    }
+  catch(e){
+
+  }}
 });
 
 app.get('/createDevice',(req,res)=>{
