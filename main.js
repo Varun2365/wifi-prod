@@ -15,31 +15,31 @@ app.listen(PORT, () => {
   console.log(`Server Started At Port : ${PORT}`)
 })
 //Connecting the MongoDB Server
-mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
+// mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
 
 
-})
-.then(async () => { // Changed to async function
-  console.log('Connected to MongoDB');
-  const db = mongoose.connection.db; // Get the db object *inside* the .then()
+// })
+// .then(async () => { // Changed to async function
+//   console.log('Connected to MongoDB');
+//   const db = mongoose.connection.db; // Get the db object *inside* the .then()
 
-  try {
-      const collections = await db.listCollections().toArray(); // Use toArray() with await
-      if (collections && collections.length > 0) {
-          console.log('Collections:', collections); // Log the collections array
-      }
-      else{
-          console.log('No collections found');
-      }
-  } catch (error) {
-      console.error('Error listing collections:', error);
-  } finally {
+//   try {
+//       const collections = await db.listCollections().toArray(); // Use toArray() with await
+//       if (collections && collections.length > 0) {
+//           console.log('Collections:', collections); // Log the collections array
+//       }
+//       else{
+//           console.log('No collections found');
+//       }
+//   } catch (error) {
+//       console.error('Error listing collections:', error);
+//   } finally {
  
-  }
-})
-.catch(err => {
-  console.error('Connection error:', err);
-});
+//   }
+// })
+// .catch(err => {
+//   console.error('Connection error:', err);
+// });
 // const db = mongoose.connect('mongodb://localhost:27017', {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
@@ -378,21 +378,32 @@ app.get('/createDevice',(req,res)=>{
   }
 })
 function saveInfo(data) {
-  console.log(`${data.date}  ${data.time}   ${data.weight}`);
-  const currentDevice = mongoose.model(data.deviceid, DeviceSchema, data.deviceid);
-  const rDate = data.date;
-  const rTime = data.time;
+  mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
 
-  const [day, month, year] = rDate.split("/").map(Number);
-  const [hours, minutes, seconds] = rTime.split(":").map(Number);
-  let dateTimeObject = new Date(year, month - 1, day, hours, minutes, seconds);
-  const IST_OFFSET = 5.5 * 60 * 60 * 1000;
-  dateTimeObject = new Date(dateTimeObject.getTime() + IST_OFFSET);
-  currentDevice.create({
-    weight: data.weight,
-    sno: parseInt(data['s.no.']),
-    dateTime: dateTimeObject
+
   })
+  .then(async () => { // Changed to async function
+    console.log(`${data.date}  ${data.time}   ${data.weight}`);
+    const currentDevice = mongoose.model(data.deviceid, DeviceSchema, data.deviceid);
+    const rDate = data.date;
+    const rTime = data.time;
+  
+    const [day, month, year] = rDate.split("/").map(Number);
+    const [hours, minutes, seconds] = rTime.split(":").map(Number);
+    let dateTimeObject = new Date(year, month - 1, day, hours, minutes, seconds);
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+    dateTimeObject = new Date(dateTimeObject.getTime() + IST_OFFSET);
+    currentDevice.create({
+      weight: data.weight,
+      sno: parseInt(data['s.no.']),
+      dateTime: dateTimeObject
+    })
+    
+  })
+  .catch(err => {
+    console.error('Connection error:', err);
+  });
+
 }
 
 function getNextDay(date) {
