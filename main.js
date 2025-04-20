@@ -15,12 +15,31 @@ app.listen(PORT, () => {
   console.log(`Server Started At Port : ${PORT}`)
 })
 //Connecting the MongoDB Server
-const db = mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server', {
+mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
 
-  dbName: 'Wifi-Module' // Ensure this is set.
+
 })
-.then(() => console.log('Connected to wifi-module database'))
-.catch(err => console.error('Connection error:', err));
+.then(async () => { // Changed to async function
+  console.log('Connected to MongoDB');
+  const db = mongoose.connection.db; // Get the db object *inside* the .then()
+
+  try {
+      const collections = await db.listCollections().toArray(); // Use toArray() with await
+      if (collections && collections.length > 0) {
+          console.log('Collections:', collections); // Log the collections array
+      }
+      else{
+          console.log('No collections found');
+      }
+  } catch (error) {
+      console.error('Error listing collections:', error);
+  } finally {
+ 
+  }
+})
+.catch(err => {
+  console.error('Connection error:', err);
+});
 // const db = mongoose.connect('mongodb://localhost:27017', {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
