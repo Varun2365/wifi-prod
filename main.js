@@ -15,16 +15,12 @@ app.listen(PORT, () => {
   console.log(`Server Started At Port : ${PORT}`)
 })
 //Connecting the MongoDB Server
-mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server/Wifi-Module', {
-  dbName : "Wifi-Module"
-
+const db = mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server/Wifi-Module', {
+  
+  dbName: 'Wifi-Module' // Ensure this is set.
 })
-.then(async () => { // Changed to async function
-  console.log('Connected to MongoDB');
-})
-.catch(err => {
-  console.error('Connection error:', err);
-});
+.then(() => console.log('Connected to wifi-module database'))
+.catch(err => console.error('Connection error:', err));
 
 const Users = mongoose.model("Users", UserSchema, "Users")
 // Users.create({
@@ -364,11 +360,7 @@ app.get('/createDevice',(req,res)=>{
   }
 })
 function saveInfo(data) {
-  mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
 
-
-  })
-  .then(async () => { // Changed to async function
     console.log(`${data.date}  ${data.time}   ${data.weight}`);
     const currentDevice = mongoose.model(data.deviceid, DeviceSchema, data.deviceid);
     const rDate = data.date;
@@ -385,12 +377,7 @@ function saveInfo(data) {
       dateTime: dateTimeObject
     })
     
-  })
-  .catch(err => {
-    console.error('Connection error:', err);
-  });
-
-}
+  }
 
 function getNextDay(date) {
   const nextDate = new Date(date);
