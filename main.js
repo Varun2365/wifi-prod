@@ -359,6 +359,7 @@ app.get('/createDevice',(req,res)=>{
   }
 })
 function saveInfo(data) {
+  console.log("Save Info Called");
   const currentDevice = mongoose.model(data.deviceid, DeviceSchema, data.deviceid);
   const rDate = data.date;
   const rTime = data.time;
