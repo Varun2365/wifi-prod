@@ -15,40 +15,8 @@ app.listen(PORT, () => {
   console.log(`Server Started At Port : ${PORT}`)
 })
 //Connecting the MongoDB Server
-// mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
 
-
-// })
-// .then(async () => { // Changed to async function
-//   console.log('Connected to MongoDB');
-//   const db = mongoose.connection.db; // Get the db object *inside* the .then()
-
-//   try {
-//       const collections = await db.listCollections().toArray(); // Use toArray() with await
-//       if (collections && collections.length > 0) {
-//           console.log('Collections:', collections); // Log the collections array
-//       }
-//       else{
-//           console.log('No collections found');
-//       }
-//   } catch (error) {
-//       console.error('Error listing collections:', error);
-//   } finally {
- 
-//   }
-// })
-// .catch(err => {
-//   console.error('Connection error:', err);
-// });
-// const db = mongoose.connect('mongodb://localhost:27017', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   dbName: 'Wifi-Module' // Ensure this is set.
-// })
-// .then(() => console.log('Connected to wifi-module database'))
-// .catch(err => console.error('Connection error:', err));
 const Users = mongoose.model("Users", UserSchema, "Users")
-
 
 //Applying API Routes
 //Home route end point for the URL
@@ -61,13 +29,25 @@ app.get("/users", async (req, res) => {
 });
 
 app.get("/cpu", (req,res)=>{
-
-
-
-  res.send(`The Number of CPUS is : ${os.cpus()[0].model} ::::: ${os.cpus().length}`)
+res.send(`The Number of CPUS is : ${os.cpus()[0].model} ::::: ${os.cpus().length}`)
 })
+
 app.get("/data", async (req, res) => {
-  const deviceName = req.query.device.toString();
+
+
+  mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/?retryWrites=true&w=majority&appName=Wifi-Server&dbName=Wifi-Module', {
+
+
+  })
+  .then(async () => { // Changed to async function
+    console.log('Connected to MongoDB');
+    const db = mongoose.connection.db; // Get the db object *inside* the .then()
+  
+    try {
+
+
+
+      const deviceName = req.query.device.toString();
   var queryDate = new Date(req.query.date.split("-").reverse().join("-").toString());
   var nextDate = getNextDay(queryDate);
   var responseJSON = {
@@ -96,6 +76,25 @@ app.get("/data", async (req, res) => {
     console.error("Error:", e.message);
     res.status(500).send("Error fetching data");
   }
+    
+    } catch (error) {
+        console.error('Error listing collections:', error);
+    } finally {
+      mongoose.connection.close();
+    }
+  })
+  .catch(err => {
+    console.error('Connection error:', err);
+  });
+
+
+
+
+
+
+
+  
+  
 
 })
 
@@ -398,7 +397,7 @@ function saveInfo(data) {
       sno: parseInt(data['s.no.']),
       dateTime: dateTimeObject
     })
-    
+    mongoose.connection.close();
   })
   .catch(err => {
     console.error('Connection error:', err);
