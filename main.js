@@ -15,9 +15,8 @@ app.listen(PORT, () => {
   console.log(`Server Started At Port : ${PORT}`)
 })
 //Connecting the MongoDB Server
-const db = mongoose.connect('mongodb+srv://VarunKumar:Varun9999#@wifi-server-prod.xd5mhbk.mongodb.net/Wifi-Module', {
-  
-  dbName: 'Wifi-Module' // Ensure this is set.
+const db = mongoose.connect('mongodb+srv://Varun:Varun9999@wifi-server.kvwhr.mongodb.net/Wifi-Module', {
+
 })
 .then(() => console.log('Connected to wifi-module database'))
 .catch(err => console.error('Connection error:', err));
