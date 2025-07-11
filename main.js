@@ -41,10 +41,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // --- Helper Functions ---
 
+// ... (rest of your imports and Express app setup)
+
 /**
  * Parses a weight string (e.g., "0003.3Kg", "0028.2K", "10.0Kg", "5Kg")
  * and returns an object containing the numeric value and a formatted string
- * that preserves the original decimal precision (if present) and appends "Kg".
+ * that preserves the original decimal precision and leading zeros,
+ * and ensures the unit is always "Kg".
  * @param {string} weightStr - The weight string to parse.
  * @returns {object} An object containing:
  * - {number} value: The parsed weight as a double.
@@ -53,40 +56,40 @@ app.use(express.urlencoded({ extended: true }));
 function parseAndFormatWeight(weightStr) {
     if (typeof weightStr !== 'string') {
         console.warn("parseAndFormatWeight received non-string input:", weightStr);
-        return { value: 0.0, formatted: "0.0Kg" }; // Default to consistent format for invalid input
+        return { value: 0.0, formatted: "0.0Kg" }; // Default for invalid input
     }
 
-    // Remove "Kg" or "K" case-insensitively and trim any whitespace
-    const cleanedStr = weightStr.replace(/[Kk][gG]?/g, '').trim();
+    let numericPart = weightStr.trim();
+    let unit = '';
 
-    // Check if the cleaned string explicitly contains a decimal point
-    const hasDecimal = cleanedStr.includes('.');
-
-    try {
-        const parsedValue = parseFloat(cleanedStr);
-
-        if (isNaN(parsedValue)) {
-            return { value: 0.0, formatted: "0.0Kg" };
-        }
-
-        let finalFormattedPart;
-        if (hasDecimal) {
-            // If original string had a decimal, use the cleaned string to preserve its exact form (e.g., "10.0")
-            finalFormattedPart = cleanedStr;
-        } else {
-            // If no decimal in original, but parsedValue is an integer, use it directly (e.g., "5")
-            // If parsedValue is not an integer but no decimal was present (unlikely with parseFloat),
-            // toString() would add decimals as needed.
-            finalFormattedPart = parsedValue.toString();
-        }
-        
-        return { value: parsedValue, formatted: `${finalFormattedPart}Kg` };
-
-    } catch (e) {
-        console.error(`Error parsing or formatting weight string '${weightStr}': ${e.message}`);
-        return { value: 0.0, formatted: "0.0Kg" }; // Default to consistent format on error
+    // Check for "Kg" suffix
+    if (numericPart.endsWith('Kg') || numericPart.endsWith('kg')) {
+        unit = 'Kg';
+        numericPart = numericPart.slice(0, -2); // Remove "Kg" or "kg"
+    } 
+    // Check for "K" suffix
+    else if (numericPart.endsWith('K') || numericPart.endsWith('k')) {
+        unit = 'K';
+        numericPart = numericPart.slice(0, -1); // Remove "K" or "k"
     }
+
+    // Now, `numericPart` holds the string like "0015.75"
+    const parsedValue = parseFloat(numericPart);
+
+    if (isNaN(parsedValue)) {
+        return { value: 0.0, formatted: "0.0Kg" };
+    }
+
+    // The key here is to use the `numericPart` directly for formatting,
+    // as it retains the leading zeros and the original decimal places.
+    // We then force the "Kg" unit.
+    const finalFormattedString = `${numericPart}Kg`;
+
+    return { value: parsedValue, formatted: finalFormattedString };
 }
+
+
+// ... (rest of your saveInfo function and other routes)
 
 /**
  * Saves incoming device data to the corresponding MongoDB collection.
