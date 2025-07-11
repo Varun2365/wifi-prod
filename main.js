@@ -192,7 +192,7 @@ app.get("/data", async (req, res) => {
         responseJSON.data = data;
         responseJSON.dataAvailable = data.length > 0;
         responseJSON.message = data.length === 0 ? "No data found for the selected date." : "Data Found";
-        console.log("Data fetched:", responseJSON);
+        // console.log("Data fetched:", responseJSON);
         res.status(200).send(responseJSON);
 
     } catch (e) {
